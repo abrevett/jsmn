@@ -12,5 +12,6 @@
   "examples": [
     "example/*.c"
   ],
+  "test": false,
   "exclude": "test"
 }

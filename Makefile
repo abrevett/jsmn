@@ -1,6 +1,12 @@
 # You can put your build options here
 -include config.mk
 
+parallel: main.c jasmine.c
+	$(CC) -g -c jasmine.c -DJSMN_PARALLEL
+	$(CC) -g -c main.c -DJSMN_PARA_THR=2
+	$(CC) -g -o main2 main.o jasmine.o -pthread
+
+
 test: test_default test_strict test_links test_strict_links
 test_default: test/tests.c jsmn.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $< -o test/$@
@@ -31,6 +37,7 @@ clean:
 	rm -f *.o example/*.o
 	rm -f simple_example
 	rm -f jsondump
+	rm -f test/test_*
 
 .PHONY: clean test
 
