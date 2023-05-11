@@ -78,6 +78,7 @@ void* jsmn_parse_par(void* arg){
     for (;;) {
       if( next_start && jslen >= *next_start ){
         //TODO: we need to skip over previously-parsed tokens; increment counters.
+        while(*next_end == -1);
         int offset = *next_end - *next_start;
         fseek(input, offset, SEEK_CUR); // we fast forward our buffered reader
         printf("start: %d, end: %d\n", *next_start, *next_end);
@@ -118,6 +119,7 @@ void* jsmn_parse_par(void* arg){
         }
       } else {
         toolkit->tokens = tok; // We get all the tokens at the end
+        toolkit->parser->end = toolkit->parser->start + toolkit->parser->pos;
         eof_expected = 1;
       }
     }
