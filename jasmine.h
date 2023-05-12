@@ -26,6 +26,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <semaphore.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,6 +90,7 @@ typedef struct jsmn_parser {
 #ifdef JSMN_PARALLEL
   unsigned int start;   /* where this node starts parsing */
   unsigned int end;     /* where this node finishes parsing */
+  sem_t lock;
 #endif
 } jsmn_parser;
 

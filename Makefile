@@ -38,6 +38,7 @@ clean:
 	rm -f simple_example
 	rm -f jsondump
 	rm -f test/test_*
+	rm -f main main2
 
 .PHONY: clean test
 

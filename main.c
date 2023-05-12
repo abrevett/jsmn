@@ -22,7 +22,7 @@ int main( void ){
     for(int i=0; i<num_thr; i++){
         pthread_join( jsmn_threads[i], NULL );
         printf("\tThread %d:\n", i);
-        jsmn_print_tokens( metadata->tokens, metadata->parser->toknext );
+        jsmn_print_tokens( metadata[i].tokens, metadata[i].parser->toknext );
         printf("\n");
     }
 }
