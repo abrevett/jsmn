@@ -110,7 +110,7 @@ JSMN_API void jsmn_init(jsmn_parser *parser);
  * Run JSON parser. It parses a JSON data string into an array of tokens,
  * each describing a single JSON object.
  */
-JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
+JSMN_API int jsmn_parse(jsmn_meta *meta, const char *js, const size_t len,
                         jsmntok_t *tokens, const unsigned int num_tokens);
 
 // TODO: define a parallel-based parser. use #defines?
@@ -153,10 +153,11 @@ static void jsmn_fill_token(jsmntok_t *token, const jsmntype_t type,
 /**
  * Fills next available token with JSON primitive.
  */
-static int jsmn_parse_primitive(jsmn_parser *parser, const char *js,
+static int jsmn_parse_primitive(jsmn_meta *meta, const char *js,
                                 const size_t len, jsmntok_t *tokens,
                                 const size_t num_tokens) {
   jsmntok_t *token;
+  jsmn_parser *parser = meta->parser;
   int start;
 
   start = parser->pos;
@@ -200,7 +201,7 @@ found:
     parser->pos = start;
     return JSMN_ERROR_NOMEM;
   }
-  jsmn_fill_token(token, JSMN_PRIMITIVE, start, parser->pos);
+  jsmn_fill_token(token, JSMN_PRIMITIVE, start + parser->start, parser->pos + parser->start);
 #ifdef JSMN_PARENT_LINKS
   token->parent = parser->toksuper;
 #endif
@@ -211,10 +212,11 @@ found:
 /**
  * Fills next token with JSON string.
  */
-static int jsmn_parse_string(jsmn_parser *parser, const char *js,
+static int jsmn_parse_string(jsmn_meta *meta, const char *js,
                              const size_t len, jsmntok_t *tokens,
                              const size_t num_tokens) {
   jsmntok_t *token;
+  jsmn_parser *parser = meta->parser;
 
   int start = parser->pos;
   
@@ -234,7 +236,7 @@ static int jsmn_parse_string(jsmn_parser *parser, const char *js,
         parser->pos = start;
         return JSMN_ERROR_NOMEM;
       }
-      jsmn_fill_token(token, JSMN_STRING, start + 1, parser->pos);
+      jsmn_fill_token(token, JSMN_STRING, parser->start + start + 1, parser->start + parser->pos);
 #ifdef JSMN_PARENT_LINKS
       token->parent = parser->toksuper;
 #endif
@@ -286,10 +288,11 @@ static int jsmn_parse_string(jsmn_parser *parser, const char *js,
 /**
  * Parse JSON string and fill tokens.
  */
-JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
+JSMN_API int jsmn_parse(jsmn_meta *meta, const char *js, const size_t len,
                         jsmntok_t *tokens, const unsigned int num_tokens) {
   int r;
   int i;
+  jsmn_parser *parser = meta->parser;
   jsmntok_t *token;
   int count = parser->toknext;
 
@@ -346,7 +349,7 @@ JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
           if (token->type != type) {
             return JSMN_ERROR_INVAL;
           }
-          token->end = parser->pos + 1;
+          token->end = parse->start + parser->pos + 1;
           parser->toksuper = token->parent;
           break;
         }
@@ -384,7 +387,7 @@ JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
 #endif
       break;
     case '\"': // INFO: if we encounter a dblquote, its the start of a string.
-      r = jsmn_parse_string(parser, js, len, tokens, num_tokens);
+      r = jsmn_parse_string(meta, js, len, tokens, num_tokens);
       if (r < 0) {
         return r;
       }
@@ -447,7 +450,7 @@ JSMN_API int jsmn_parse(jsmn_parser *parser, const char *js, const size_t len,
     /* In non-strict mode every unquoted value is a primitive */
     default:
 #endif
-      r = jsmn_parse_primitive(parser, js, len, tokens, num_tokens);
+      r = jsmn_parse_primitive(meta, js, len, tokens, num_tokens);
       if (r < 0) {
         return r;
       }

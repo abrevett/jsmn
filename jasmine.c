@@ -40,7 +40,7 @@ jsmn_meta* jsmn_init_par(int num_thr, const char* file){
     for(int i=0; i<num_thr; i++){
         // Initialize every jsmn parser
         jsmn_init( &parsers[i] );
-        parsers[i].start = i*foff; parsers[i].end = (unsigned int) -1;
+        parsers[i].start = parsers[i].end = i*foff;
 #ifdef JSMN_PARALLEL
         sem_init( &(parsers[i].lock), 0, 1);
 #endif
@@ -80,9 +80,17 @@ void* jsmn_parse_par(void* arg){
 
     // We now move the scanner to the next available '{'
     sem_wait(parser_lock);
-    char c;
-    while( (c = fgetc(input)) != '{' );
-    ungetc(c, input);
+    char c; 
+    while( p->start < p->end ){
+        c = fgetc(input);
+        if(c != '{'){
+            p->start++;
+        }
+        else{
+            ungetc(c, input);
+            p->start--;
+        }
+    }
     sem_post(parser_lock);
 #endif 
 
@@ -141,7 +149,7 @@ void* jsmn_parse_par(void* arg){
 #ifdef JSMN_PARALLEL
         sem_wait(parser_lock);
 #endif
-        r = jsmn_parse(p, js, jslen, tok, tokcount);
+        r = jsmn_parse(toolkit, js, jslen, tok, tokcount);
 #ifdef JSMN_PARALLEL
         sem_post(parser_lock);
 #endif
@@ -161,9 +169,9 @@ void* jsmn_parse_par(void* arg){
 #ifdef JSMN_PARALLEL
         sem_wait(parser_lock);
 #endif
-        toolkit->parser->end = toolkit->parser->start + toolkit->parser->pos;
-	printf("Thread %ld: endpoint: %d\n", pthread_self(), toolkit->parser->end );
+        p->end = p->start + p->pos;
 #ifdef JSMN_PARALLEL
+        printf("Thread %ld: endpoint: %d\n", pthread_self(), p->end );
         sem_post(parser_lock);
 #endif
     }

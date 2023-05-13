@@ -3,7 +3,7 @@
 
 parallel: main.c jasmine.c
 	$(CC) -g -c jasmine.c -DJSMN_PARALLEL
-	$(CC) -g -c main.c -DJSMN_PARA_THR=2
+	$(CC) -g -c main.c -DJSMN_PARA_THR=2 -DJSMN_PARALLEL
 	$(CC) -g -o main2 main.o jasmine.o -pthread
 
 

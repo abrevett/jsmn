@@ -8,7 +8,7 @@ run_8m() {
 }
 
 run_8m_par() {
-    ./main2
+    ./main2 > /dev/null
 }
 
 echo '8MB run:'
