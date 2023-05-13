@@ -27,8 +27,4 @@ int main( void ){
         jsmn_print_tokens( metadata[i].tokens, metadata[i].parser->toknext );
         printf("\n");
     }
-    printf("\tThread %ld: [ %d, %d ] \n",
-        jsmn_threads[0],  metadata[0].parser->start, metadata[0].parser->end);
-    jsmn_print_tokens( metadata[0].tokens, metadata[0].parser->toknext );
-    printf("\n");
 }

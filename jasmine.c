@@ -52,10 +52,6 @@ jsmn_meta* jsmn_init_par(int num_thr, const char* file){
         if(i < num_thr-1) metadata[i].next = &metadata[i+1];
     }
 
-    for(int i=0; i< num_thr; i++){
-	printf("Thread");
-    }
-
     return metadata;
 }
 
