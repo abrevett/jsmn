@@ -8,8 +8,8 @@
 
 
 int main( void ){
-    const char* input = "library.json";
-//    const char* input = "test-large-8M.json";
+//    const char* input = "library.json";
+    const char* input = "test-large-8M.json";
     const int num_thr = JSMN_PARA_THR;
 
     // TODO: run parallel jsmn code:
@@ -22,9 +22,9 @@ int main( void ){
     }
     for(int i=0; i<num_thr; i++){
         int ret = (int) pthread_join( jsmn_threads[i], NULL );
-        printf("\tThread %ld: (%d) [ %d, %d ] \n",
-            jsmn_threads[i], ret, metadata[i].parser->start, metadata[i].parser->end);
-        jsmn_print_tokens( metadata[i].tokens, metadata[i].parser->toknext );
-        printf("\n");
+//        printf("\tThread %ld: (%d) [ %d, %d ] \n",
+//            jsmn_threads[i], ret, metadata[i].parser->start, metadata[i].parser->end);
+//        jsmn_print_tokens( metadata[i].tokens, metadata[i].parser->toknext );
+//        printf("\n");
     }
 }

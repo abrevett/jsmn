@@ -330,7 +330,7 @@ JSMN_API int jsmn_parse(jsmn_meta *meta, const char *js, const size_t len,
 #endif
       }
       token->type = (c == '{' ? JSMN_OBJECT : JSMN_ARRAY);
-      token->start = parser->pos;
+      token->start = parser->start + parser->pos;
       parser->toksuper = parser->toknext - 1;
       break;
     case '}':
@@ -369,7 +369,7 @@ JSMN_API int jsmn_parse(jsmn_meta *meta, const char *js, const size_t len,
             return JSMN_ERROR_INVAL;
           }
           parser->toksuper = -1;
-          token->end = parser->pos + 1;
+          token->end = parser->start + parser->pos + 1;
           break;
         }
       }

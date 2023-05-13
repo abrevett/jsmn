@@ -11,6 +11,9 @@ run_8m_par() {
     ./main2 > /dev/null
 }
 
+echo '2MB run:'
+time run_2m
+
 echo '8MB run:'
 time run_8m
 

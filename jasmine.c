@@ -21,8 +21,8 @@ const static char* INPUT_FILE="test_large_8M.json";
 
 void jsmn_print_tokens(jsmntok_t* tokens, int num_tokens){
     for(int i=0; i<num_tokens; i++){
-        printf("type:%d, start:%d, end:%d\n", 
-        tokens[i].type, tokens[i].start, tokens[i].end);
+//        printf("type:%d, start:%d, end:%d\n", 
+//        tokens[i].type, tokens[i].start, tokens[i].end);
     }
 }
 
@@ -46,7 +46,7 @@ jsmn_meta* jsmn_init_par(int num_thr, const char* file){
 #endif
         // Initializing FILE pointers
         scanners[i] = fopen( file, "r" ); fseek(scanners[i], i*foff, SEEK_SET);
-        printf("Thread %d starts @%ld\n", i, ftell(scanners[i]));
+//        printf("Thread %d starts @%ld\n", i, ftell(scanners[i]));
         // moving over pointers
         metadata[i].scanner = scanners[i]; metadata[i].parser = &parsers[i];
         if(i < num_thr-1) metadata[i].next = &metadata[i+1];
@@ -105,8 +105,8 @@ void* jsmn_parse_par(void* arg){
             if( *next_start && jslen >= *next_start ){
                 int offset = *next_end - *next_start;
                 fseek(input, offset, SEEK_CUR); // we fast forward our buffered reader
-                printf("start: %d, end: %d\n", *next_start, *next_end);
-                printf("hit boundary, now at %ld\n", ftell(input));
+//                printf("start: %d, end: %d\n", *next_start, *next_end);
+//                printf("hit boundary, now at %ld\n", ftell(input));
             }
             sem_post(next_parser_lock);
         }
@@ -129,7 +129,7 @@ void* jsmn_parse_par(void* arg){
 #ifdef JSMN_PARALLEL
         sem_wait(parser_lock);
 #endif
-	printf("Thread %ld: parsing buffer ' %s '\n", pthread_self(), buf);
+//	printf("Thread %ld: parsing buffer ' %s '\n", pthread_self(), buf);
 #ifdef JSMN_PARALLEL
         sem_post(parser_lock);
 #endif
@@ -167,7 +167,7 @@ void* jsmn_parse_par(void* arg){
 #endif
         p->end = p->start + p->pos;
 #ifdef JSMN_PARALLEL
-        printf("Thread %ld: endpoint: %d\n", pthread_self(), p->end );
+//        printf("Thread %ld: endpoint: %d\n", pthread_self(), p->end );
         sem_post(parser_lock);
 #endif
     }
